@@ -1,0 +1,642 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+    span.s1 {font: 12.0px 'Hiragino Sans'}
+    span.s2 {font: 12.0px 'Lucida Grande'}
+    span.s3 {font: 12.0px 'Apple Symbols'}
+    span.s4 {font: 12.0px 'Apple Color Emoji'}
+    span.s5 {font: 12.0px 'Zapf Dingbats'}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1">&lt;title&gt;BoxLogic&lt;/title&gt;</p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>* { box-sizing: border-box; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>html, body {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 0; height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #1a1d2e;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: #eef;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#wrap {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex; flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>align-items: center; justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>height: 100%; padding: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>h1 {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 0 0 4px 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 2em;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>letter-spacing: 0.12em;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: linear-gradient(180deg, #ffd166, #f4845f);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>-webkit-background-clip: text;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background-clip: text;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: transparent;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#sub { color: #9aa; font-size: 0.85em; margin-bottom: 10px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#stage {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #23273f;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 14px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 16px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#hud {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex; justify-content: space-between; align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width: 100%; margin-bottom: 10px; font-size: 0.95em; color: #bcd;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#hud .stat { margin-right: 18px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#hud .val { color: #ffd166; font-weight: bold; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>canvas { display: block; border-radius: 6px; background: #14162a; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#controls {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: linear-gradient(180deg, #3a3f66, #2b2f52);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: #eef; border: 1px solid rgba(255,255,255,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 8px 16px; border-radius: 8px; font-size: 0.9em;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer; font-family: inherit;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transition: transform 0.08s, background 0.15s;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button:hover { background: linear-gradient(180deg, #4a5080, #3a3f66); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button:active { transform: scale(0.95); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button.primary { background: linear-gradient(180deg, #ffd166, #f4845f); color: #221; font-weight: bold; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button.primary:hover { filter: brightness(1.08); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#levelSelect {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>grid-template-columns: repeat(5, 1fr);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>gap: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>max-width: 420px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#levelSelect button {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 10px 0; font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#levelSelect button.done { background: linear-gradient(180deg, #6fcf97, #3fa768); color: #123; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#levelSelect button.locked { opacity: 0.35; cursor: not-allowed; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#toast {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>position: absolute; top: -46px; left: 50%; transform: translateX(-50%);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #ffd166; color: #221; padding: 8px 18px; border-radius: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-weight: bold; font-size: 0.9em; opacity: 0; transition: all 0.3s;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>pointer-events: none; white-space: nowrap;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#toast.show { opacity: 1; top: -60px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#legend { margin-top: 10px; font-size: 0.78em; color: #789; text-align: center; line-height: 1.6; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* ---- responsive / phone layout ---- */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#wrap { width: 100%; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#stage { max-width: 95vw; width: 480px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>canvas { max-width: 100%; height: auto; touch-action: none; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* ---- on-screen D-pad (phones) ---- */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#pad {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>grid-template-columns: 52px 52px 52px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>grid-template-rows: 52px 52px 52px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>gap: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 14px auto 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#pad button { padding: 0; font-size: 1.3em; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#pad .up { grid-column: 2; grid-row: 1; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#pad .left { grid-column: 1; grid-row: 2; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#pad .right { grid-column: 3; grid-row: 2; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#pad .down { grid-column: 2; grid-row: 3; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>@media (max-width: 700px), (pointer: coarse) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>#pad { display: grid; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>#legend { display: none; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* ---- leaderboard + name modal ---- */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#lbBtn { margin-left: 6px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modalOverlay {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>position: fixed; inset: 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: rgba(0,0,0,0.6);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>align-items: center; justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>z-index: 50;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modalOverlay.show { display: flex; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modalBox {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #23273f;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 14px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 22px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width: min(340px, 88vw);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>box-shadow: 0 10px 40px rgba(0,0,0,0.6);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modalBox h2 { margin: 0 0 6px 0; color: #ffd166; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modalBox p { color: #aab; font-size: 0.9em; margin: 4px 0 14px 0; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modalBox input {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #14162a; color: #eef; font-size: 1em; margin-bottom: 12px; box-sizing: border-box;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.modalBox .row { display: flex; gap: 8px; justify-content: flex-end; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#lbList { list-style: none; margin: 0; padding: 0; max-height: 340px; overflow-y: auto; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#lbList li {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex; justify-content: space-between; padding: 8px 4px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.92em;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#lbList li:first-child { color: #ffd166; font-weight: bold; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#lbStatus { font-size: 0.85em; color: #89a; text-align: center; padding: 10px 0; }</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1">&lt;div id="wrap"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;h1&gt;BOXLOGIC&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="sub"&gt;Push every crate onto a target. No timers, no reflexes — just think.&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="stage"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="toast"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="hud"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="stat"&gt;Level &lt;span class="val" id="lvlNum"&gt;1&lt;/span&gt;/&lt;span id="lvlTotal"&gt;&lt;/span&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="stat"&gt;Moves: &lt;span class="val" id="moveCount"&gt;0&lt;/span&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="stat"&gt;Pushes: &lt;span class="val" id="pushCount"&gt;0&lt;/span&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;Best: &lt;span class="val" id="bestMoves"&gt;—&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;canvas id="board"&gt;&lt;/canvas&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="pad"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="up" id="padUp"&gt;<span class="s1">▲</span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="left" id="padLeft"&gt;<span class="s1">◀</span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="right" id="padRight"&gt;<span class="s2">▶</span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="down" id="padDown"&gt;<span class="s2">▼</span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="controls"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="undoBtn"&gt;<span class="s2">↩</span> Undo (Z)&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="resetBtn"&gt;<span class="s3">⟲</span> Reset (R)&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="hintBtn"&gt;<span class="s4">💡</span> Hint&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="levelsBtn"&gt;<span class="s3">☰</span> Levels&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="lbBtn"&gt;<span class="s4">🏆</span> Leaderboard&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="primary" id="nextBtn" style="display:none"&gt;Next Level <span class="s2">→</span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="levelSelect"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="legend"&gt;Arrow keys / WASD to move · Push crates <span class="s4">📦</span> onto targets <span class="s5">✦</span> · Z to undo · R to reset&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- Name entry modal, shown once all 12 levels are solved --&gt;</p>
+<p class="p1">&lt;div class="modalOverlay" id="nameModal"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="modalBox"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h2&gt;You beat BoxLogic! <span class="s4">🏆</span>&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p id="finalScoreLine"&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;input id="nameInput" maxlength="16" placeholder="Enter your name"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="row"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="skipSubmit"&gt;Skip&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="primary" id="submitScore"&gt;Submit Score&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- Leaderboard modal --&gt;</p>
+<p class="p1">&lt;div class="modalOverlay" id="lbModal"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="modalBox"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h2&gt;Leaderboard&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p&gt;Lowest total moves to clear all 12 levels&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="lbStatus"&gt;Loading…&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;ol id="lbList"&gt;&lt;/ol&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="row" style="margin-top:12px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button id="closeLb"&gt;Close&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script src="levels.js"&gt;&lt;/script&gt;</p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">const TILE = 46;</p>
+<p class="p1">const canvas = document.getElementById('board');</p>
+<p class="p1">const ctx = canvas.getContext('2d');</p>
+<p class="p2"><br></p>
+<p class="p1">let grid = []; <span class="Apple-converted-space">      </span>// 'wall' | 'floor'</p>
+<p class="p1">let targets = [];<span class="Apple-converted-space">    </span>// boolean grid</p>
+<p class="p1">let crates = []; <span class="Apple-converted-space">    </span>// {x,y}</p>
+<p class="p1">let player = { x:0, y:0 };</p>
+<p class="p1">let rows = 0, cols = 0;</p>
+<p class="p1">let history = [];<span class="Apple-converted-space">    </span>// stack of {crates, player, moves, pushes}</p>
+<p class="p1">let moves = 0, pushes = 0;</p>
+<p class="p1">let currentLevel = 0;</p>
+<p class="p1">let bestByLevel = {};</p>
+<p class="p1">let solvedByLevel = {};</p>
+<p class="p2"><br></p>
+<p class="p1">function parseLevel(str) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const lines = str.split('\n');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>rows = lines.length;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cols = Math.max(...lines.map(l =&gt; l.length));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>grid = []; targets = []; crates = [];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>for (let y = 0; y &lt; rows; y++) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const line = lines[y];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const gRow = [], tRow = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (let x = 0; x &lt; cols; x++) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const ch = line[x] || ' ';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>let isWall = ch === '#';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>let isTarget = false;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (ch === '.' || ch === '+' || ch === '*') isTarget = true;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (ch === '@' || ch === '+') { player = { x, y }; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (ch === '$' || ch === '*') { crates.push({ x, y }); }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>gRow.push(isWall ? 'wall' : (ch === ' ' ? 'void' : 'floor'));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>tRow.push(isTarget);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>grid.push(gRow);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>targets.push(tRow);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function loadLevel(idx) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>currentLevel = idx;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>parseLevel(LEVELS[idx]);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>history = [];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>moves = 0; pushes = 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>canvas.width = cols * TILE;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>canvas.height = rows * TILE;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>updateHUD();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('nextBtn').style.display = 'none';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>draw();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function isWall(x, y) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return !grid[y] || grid[y][x] === 'wall' || grid[y][x] === undefined;</p>
+<p class="p1">}</p>
+<p class="p1">function crateAt(x, y) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return crates.find(c =&gt; c.x === x &amp;&amp; c.y === y);</p>
+<p class="p1">}</p>
+<p class="p1">function isTarget(x, y) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return targets[y] &amp;&amp; targets[y][x];</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function snapshot() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>crates: crates.map(c =&gt; ({...c})),</p>
+<p class="p1"><span class="Apple-converted-space">    </span>player: {...player},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>moves, pushes</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function tryMove(dx, dy) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const nx = player.x + dx, ny = player.y + dy;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (isWall(nx, ny)) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const crate = crateAt(nx, ny);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (crate) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const bx = nx + dx, by = ny + dy;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (isWall(bx, by) || crateAt(bx, by)) return; // blocked push</p>
+<p class="p1"><span class="Apple-converted-space">    </span>history.push(snapshot());</p>
+<p class="p1"><span class="Apple-converted-space">    </span>crate.x = bx; crate.y = by;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>player.x = nx; player.y = ny;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>moves++; pushes++;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>history.push(snapshot());</p>
+<p class="p1"><span class="Apple-converted-space">    </span>player.x = nx; player.y = ny;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>moves++;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>updateHUD();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>draw();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>checkWin();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function undo() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!history.length) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const s = history.pop();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>crates = s.crates; player = s.player; moves = s.moves; pushes = s.pushes;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>updateHUD();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>draw();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function resetLevel() { loadLevel(currentLevel); }</p>
+<p class="p2"><br></p>
+<p class="p1">function checkWin() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const solved = crates.every(c =&gt; isTarget(c.x, c.y));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (solved) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>solvedByLevel[currentLevel] = true;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!bestByLevel[currentLevel] || moves &lt; bestByLevel[currentLevel]) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>bestByLevel[currentLevel] = moves;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>updateHUD();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>showToast(`Solved in ${moves} moves! <span class="s4">🎉</span>`);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('nextBtn').style.display = currentLevel &lt; LEVELS.length - 1 ? 'inline-block' : 'none';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const allSolved = LEVELS.every((_, i) =&gt; solvedByLevel[i]);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (allSolved) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const total = LEVELS.reduce((sum, _, i) =&gt; sum + bestByLevel[i], 0);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>setTimeout(() =&gt; showFinalScore(total), 1200);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ---------------- Leaderboard flow ----------------</p>
+<p class="p1">function showFinalScore(total) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('finalScoreLine').textContent =</p>
+<p class="p1"><span class="Apple-converted-space">    </span>`All 12 levels cleared in ${total} total moves. Submit your score?`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('nameModal').classList.add('show');</p>
+<p class="p1">}</p>
+<p class="p1">document.getElementById('skipSubmit').onclick = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('nameModal').classList.remove('show');</p>
+<p class="p1">};</p>
+<p class="p1">document.getElementById('submitScore').onclick = async () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const name = document.getElementById('nameInput').value.trim() || 'Anonymous';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const total = LEVELS.reduce((sum, _, i) =&gt; sum + (bestByLevel[i] || 0), 0);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('nameModal').classList.remove('show');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (typeof window.submitScore === 'function') {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>showToast('Submitting score…');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>await window.submitScore(name, total);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>showToast('Score submitted! <span class="s4">🎉</span>');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>showToast('Could not submit — check Firebase setup.');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>openLeaderboard();</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">function openLeaderboard() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('lbModal').classList.add('show');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>refreshLeaderboard();</p>
+<p class="p1">}</p>
+<p class="p1">async function refreshLeaderboard() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const statusEl = document.getElementById('lbStatus');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const listEl = document.getElementById('lbList');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>listEl.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (typeof window.loadLeaderboard !== 'function') {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>statusEl.textContent = 'Leaderboard not configured yet.';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>statusEl.textContent = 'Loading…';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const rows = await window.loadLeaderboard();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!rows.length) { statusEl.textContent = 'No scores yet — be the first!'; return; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>statusEl.textContent = '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>rows.forEach((r, i) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const li = document.createElement('li');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>li.innerHTML = `&lt;span&gt;#${i+1} ${r.name}&lt;/span&gt;&lt;span&gt;${r.totalMoves} moves&lt;/span&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>listEl.appendChild(li);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>statusEl.textContent = 'Could not load leaderboard — check Firebase setup.';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">}</p>
+<p class="p1">document.getElementById('lbBtn').onclick = openLeaderboard;</p>
+<p class="p1">document.getElementById('closeLb').onclick = () =&gt; document.getElementById('lbModal').classList.remove('show');</p>
+<p class="p2"><br></p>
+<p class="p1">function showToast(msg) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const t = document.getElementById('toast');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>t.textContent = msg;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>t.classList.add('show');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>setTimeout(() =&gt; t.classList.remove('show'), 2200);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function updateHUD() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('lvlNum').textContent = currentLevel + 1;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('lvlTotal').textContent = LEVELS.length;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('moveCount').textContent = moves;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('pushCount').textContent = pushes;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('bestMoves').textContent = bestByLevel[currentLevel] ?? '—';</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ---------------- Rendering ----------------</p>
+<p class="p1">function draw() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.clearRect(0, 0, canvas.width, canvas.height);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>for (let y = 0; y &lt; rows; y++) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (let x = 0; x &lt; cols; x++) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const px = x*TILE, py = y*TILE;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const cell = grid[y][x];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (cell === 'void') continue;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (cell === 'wall') {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillStyle = '#3a3f5c';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillRect(px, py, TILE, TILE);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.strokeStyle = 'rgba(0,0,0,0.25)';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.strokeRect(px+1, py+1, TILE-2, TILE-2);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillStyle = 'rgba(255,255,255,0.04)';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillRect(px+4, py+4, TILE-8, 6);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillStyle = (x+y)%2===0 ? '#181b30' : '#1c1f38';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>ctx.fillRect(px, py, TILE, TILE);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (targets[y][x]) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>ctx.strokeStyle = '#ffd166';</p>
+<p class="p1"><span class="Apple-converted-space">          </span>ctx.lineWidth = 2;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>ctx.beginPath();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>ctx.arc(px+TILE/2, py+TILE/2, TILE*0.22, 0, Math.PI*2);</p>
+<p class="p1"><span class="Apple-converted-space">          </span>ctx.stroke();</p>
+<p class="p1"><span class="Apple-converted-space">          </span>ctx.fillStyle = 'rgba(255,209,102,0.25)';</p>
+<p class="p1"><span class="Apple-converted-space">          </span>ctx.fill();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// crates</p>
+<p class="p1"><span class="Apple-converted-space">  </span>crates.forEach(c =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const px = c.x*TILE, py = c.y*TILE;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const onTarget = isTarget(c.x, c.y);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fillStyle = onTarget ? '#6fcf97' : '#d98a4f';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.strokeStyle = onTarget ? '#3fa768' : '#a5602c';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.lineWidth = 3;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>roundRect(px+5, py+5, TILE-10, TILE-10, 6);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fill(); ctx.stroke();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.strokeStyle = 'rgba(0,0,0,0.2)';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.lineWidth = 1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.strokeRect(px+11, py+11, TILE-22, TILE-22);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// player</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const pxp = player.x*TILE, pyp = player.y*TILE;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.fillStyle = '#7cc4ff';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.beginPath();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.arc(pxp+TILE/2, pyp+TILE/2, TILE*0.32, 0, Math.PI*2);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.fill();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.fillStyle = '#1a1d2e';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.beginPath();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.arc(pxp+TILE/2-6, pyp+TILE/2-4, 3.5, 0, Math.PI*2);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.arc(pxp+TILE/2+6, pyp+TILE/2-4, 3.5, 0, Math.PI*2);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.fill();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function roundRect(x, y, w, h, r) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.beginPath();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.moveTo(x+r, y);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.arcTo(x+w, y, x+w, y+h, r);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.arcTo(x+w, y+h, x, y+h, r);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.arcTo(x, y+h, x, y, r);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.arcTo(x, y, x+w, y, r);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.closePath();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ---------------- Hint (simple BFS solver for nudge, not full solve) ----------------</p>
+<p class="p1">function hint() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// Find first crate not on a target, suggest the nearest target direction as a nudge.</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const stray = crates.find(c =&gt; !isTarget(c.x, c.y));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!stray) { showToast('Everything is already placed!'); return; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>let nearest = null, best = Infinity;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>for (let y = 0; y &lt; rows; y++) for (let x = 0; x &lt; cols; x++) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (targets[y] &amp;&amp; targets[y][x] &amp;&amp; !crateAt(x,y)) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const d = Math.abs(x-stray.x)+Math.abs(y-stray.y);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (d &lt; best) { best = d; nearest = {x,y}; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!nearest) { showToast('Think about which target needs this crate.'); return; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const dx = nearest.x - stray.x, dy = nearest.y - stray.y;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const dir = Math.abs(dx) &gt; Math.abs(dy) ? (dx&gt;0?'right':'left') : (dy&gt;0?'down':'up');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>showToast(`Try moving a crate ${dir} — nearest empty target is that way.`);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ---------------- Level select ----------------</p>
+<p class="p1">function buildLevelSelect() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const el = document.getElementById('levelSelect');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>el.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>LEVELS.forEach((_, i) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const b = document.createElement('button');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>b.textContent = i+1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (solvedByLevel[i]) b.classList.add('done');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>b.onclick = () =&gt; { loadLevel(i); toggleLevelSelect(false); };</p>
+<p class="p1"><span class="Apple-converted-space">    </span>el.appendChild(b);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">}</p>
+<p class="p1">function toggleLevelSelect(force) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const el = document.getElementById('levelSelect');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const show = force !== undefined ? force : el.style.display !== 'grid';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (show) buildLevelSelect();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>el.style.display = show ? 'grid' : 'none';</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ---------------- Input ----------------</p>
+<p class="p1">window.addEventListener('keydown', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const map = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ArrowUp:[0,-1], KeyW:[0,-1],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ArrowDown:[0,1], KeyS:[0,1],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ArrowLeft:[-1,0], KeyA:[-1,0],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ArrowRight:[1,0], KeyD:[1,0]</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (map[e.code]) { e.preventDefault(); tryMove(...map[e.code]); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (e.code === 'KeyZ') undo();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (e.code === 'KeyR') resetLevel();</p>
+<p class="p1">});</p>
+<p class="p2"><br></p>
+<p class="p1">document.getElementById('padUp').onclick = () =&gt; tryMove(0,-1);</p>
+<p class="p1">document.getElementById('padDown').onclick = () =&gt; tryMove(0,1);</p>
+<p class="p1">document.getElementById('padLeft').onclick = () =&gt; tryMove(-1,0);</p>
+<p class="p1">document.getElementById('padRight').onclick = () =&gt; tryMove(1,0);</p>
+<p class="p2"><br></p>
+<p class="p1">document.getElementById('undoBtn').onclick = undo;</p>
+<p class="p1">document.getElementById('resetBtn').onclick = resetLevel;</p>
+<p class="p1">document.getElementById('hintBtn').onclick = hint;</p>
+<p class="p1">document.getElementById('levelsBtn').onclick = () =&gt; toggleLevelSelect();</p>
+<p class="p1">document.getElementById('nextBtn').onclick = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (currentLevel &lt; LEVELS.length - 1) loadLevel(currentLevel + 1);</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">// touch swipe support</p>
+<p class="p1">let touchStart = null;</p>
+<p class="p1">canvas.addEventListener('touchstart', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };</p>
+<p class="p1">}, {passive:true});</p>
+<p class="p1">canvas.addEventListener('touchend', e =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!touchStart) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const dx = e.changedTouches[0].clientX - touchStart.x;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const dy = e.changedTouches[0].clientY - touchStart.y;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (Math.abs(dx) &gt; Math.abs(dy)) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (Math.abs(dx) &gt; 20) tryMove(dx&gt;0?1:-1, 0);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (Math.abs(dy) &gt; 20) tryMove(0, dy&gt;0?1:-1);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>touchStart = null;</p>
+<p class="p1">});</p>
+<p class="p2"><br></p>
+<p class="p1">loadLevel(0);</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!--</p>
+<p class="p1"><span class="Apple-converted-space">  </span>===========================================================================</p>
+<p class="p1"><span class="Apple-converted-space">  </span>LEADERBOARD SETUP (Firebase Firestore)</p>
+<p class="p1"><span class="Apple-converted-space">  </span>===========================================================================</p>
+<p class="p1"><span class="Apple-converted-space">  </span>1. Go to https://console.firebase.google.com -&gt; Add project (free tier is</p>
+<p class="p1"><span class="Apple-converted-space">     </span>plenty for this).</p>
+<p class="p1"><span class="Apple-converted-space">  </span>2. In the project, go to Build -&gt; Firestore Database -&gt; Create database.</p>
+<p class="p1"><span class="Apple-converted-space">     </span>Start in PRODUCTION mode (not test mode), any region is fine.</p>
+<p class="p1"><span class="Apple-converted-space">  </span>3. Go to Firestore -&gt; Rules and paste this, then Publish:</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">       </span>rules_version = '2';</p>
+<p class="p1"><span class="Apple-converted-space">       </span>service cloud.firestore {</p>
+<p class="p1"><span class="Apple-converted-space">         </span>match /databases/{database}/documents {</p>
+<p class="p1"><span class="Apple-converted-space">           </span>match /scores/{scoreId} {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>allow read: if true;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>allow create: if request.resource.data.keys().hasOnly(['name','totalMoves','createdAt'])</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&amp;&amp; request.resource.data.name is string</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&amp;&amp; request.resource.data.name.size() &lt;= 16</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&amp;&amp; request.resource.data.totalMoves is int</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&amp;&amp; request.resource.data.totalMoves &gt; 0</p>
+<p class="p1"><span class="Apple-converted-space">                           </span>&amp;&amp; request.resource.data.totalMoves &lt; 100000;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>allow update, delete: if false;</p>
+<p class="p1"><span class="Apple-converted-space">           </span>}</p>
+<p class="p1"><span class="Apple-converted-space">         </span>}</p>
+<p class="p1"><span class="Apple-converted-space">       </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">     </span>This lets anyone read the leaderboard and add a new score, but nobody</p>
+<p class="p1"><span class="Apple-converted-space">     </span>can edit or delete existing scores, and scores must look like real</p>
+<p class="p1"><span class="Apple-converted-space">     </span>scores (right shape, sane range) rather than arbitrary data.</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>4. Go to Project settings (gear icon) -&gt; General -&gt; "Your apps" -&gt; Web app</p>
+<p class="p1"><span class="Apple-converted-space">     </span>(&lt;/&gt; icon) -&gt; register the app -&gt; copy the firebaseConfig object it</p>
+<p class="p1"><span class="Apple-converted-space">     </span>gives you -&gt; paste it below, replacing the placeholder values.</p>
+<p class="p1"><span class="Apple-converted-space">  </span>5. Commit and push — GitHub Pages will pick it up automatically.</p>
+<p class="p1"><span class="Apple-converted-space">  </span>===========================================================================</p>
+<p class="p1">--&gt;</p>
+<p class="p1">&lt;script type="module"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>import {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>getFirestore, collection, addDoc, serverTimestamp,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>query, orderBy, limit, getDocs</p>
+<p class="p1"><span class="Apple-converted-space">  </span>} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ---- REPLACE THESE WITH YOUR OWN FIREBASE PROJECT VALUES ----</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const firebaseConfig = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>apiKey: "YOUR_API_KEY",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>authDomain: "YOUR_PROJECT_ID.firebaseapp.com",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>projectId: "YOUR_PROJECT_ID",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>storageBucket: "YOUR_PROJECT_ID.appspot.com",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>messagingSenderId: "YOUR_SENDER_ID",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>appId: "YOUR_APP_ID"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// ---------------------------------------------------------------</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>let db = null;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!firebaseConfig.apiKey.startsWith('YOUR_')) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const app = initializeApp(firebaseConfig);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>db = getFirestore(app);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>console.warn('Firebase not configured yet:', e);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.submitScore = async function(name, totalMoves) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!db) throw new Error('Firebase not configured');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>await addDoc(collection(db, 'scores'), {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>name: String(name).slice(0, 16),</p>
+<p class="p1"><span class="Apple-converted-space">      </span>totalMoves: Math.round(totalMoves),</p>
+<p class="p1"><span class="Apple-converted-space">      </span>createdAt: serverTimestamp()</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>window.loadLeaderboard = async function() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!db) throw new Error('Firebase not configured');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const q = query(collection(db, 'scores'), orderBy('totalMoves', 'asc'), limit(10));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const snap = await getDocs(q);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return snap.docs.map(d =&gt; d.data());</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
