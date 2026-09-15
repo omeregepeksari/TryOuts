@@ -8,9 +8,21 @@
 // * = crate on target
 // . = target
 //
-// Add new levels at the bottom of this list.
-// Do not change anything in index.html.
-//
+// Add new levels.
+
+
+/*
+//17 template
+`##################
+#                #
+#                #
+#                #
+#                #
+#                #
+#                #
+#                #
+##################`,
+*/
 
 const LEVELS = [
 
@@ -182,5 +194,19 @@ const LEVELS = [
 #   ###########   #
 ###################`
 */
+
+
+//17 template
+`##################
+#      #    # .  #
+# .    #    # .  #
+#   #       #    #
+#   #  #    #    #
+#   #  #    #    #
+#   #  #    #    #
+#   .   #   #    #
+#       #        #
+##################`,
+
 
 ];
