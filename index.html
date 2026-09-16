@@ -128,15 +128,12 @@
     .hintText { font-size: 0.85em; color: #678; margin: 4px 0; }
     #authError { color: #f4845f; font-size: 0.85em; margin: -6px 0 10px 0; display: none; }
     #accountModal h3 { margin: 18px 0 6px 0; color: #ffd166; font-size: 0.95em; }
-    .onlineBadge { cursor: pointer; font-size: 0.8em; color: #6fcf97; margin-bottom: 10px; }
-    .onlineBadge:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
 <div id="wrap">
   <h1>BOXLOGIC</h1>
   <div id="sub">Push every crate onto a target. No timers, no reflexes — just think.</div>
-  <div id="onlineBadge" class="onlineBadge">🟢 …</div>
   <div id="stage">
     <div id="toast"></div>
     <div id="hud">
@@ -235,17 +232,6 @@
 
     <div class="row" style="margin-top:12px">
       <button id="closeAccount">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- Online-now modal -->
-<div class="modalOverlay" id="onlineModal">
-  <div class="modalBox">
-    <h2>Online Now</h2>
-    <div id="onlineList"></div>
-    <div class="row" style="margin-top:12px">
-      <button id="closeOnline">Close</button>
     </div>
   </div>
 </div>
