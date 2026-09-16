@@ -147,7 +147,6 @@
     <canvas id="board"></canvas>
 
     <div id="controls">
-      <button id="undoBtn">↩ Undo (Z)</button>
       <button id="resetBtn">⟲ Reset (R)</button>
       <button id="hintBtn">💡 Hint</button>
       <button id="levelsBtn">☰ Levels</button>
@@ -166,7 +165,7 @@
       <button class="primary" id="nextBtn" style="display:none">Next Level →</button>
     </div>
     <div id="levelSelect"></div>
-    <div id="legend">Arrow keys / WASD or swipe to move · Push crates 📦 onto targets ✦ · Z to undo · R to reset</div>
+    <div id="legend">Arrow keys / WASD or swipe to move · Push crates 📦 onto targets ✦ · R to reset</div>
   </div>
 </div>
 
@@ -625,7 +624,6 @@
     if (e.code === 'KeyR') resetLevel();
   });
 
-  document.getElementById('undoBtn').onclick = undo;
   document.getElementById('resetBtn').onclick = resetLevel;
   document.getElementById('hintBtn').onclick = hint;
   document.getElementById('levelsBtn').onclick = () => toggleLevelSelect();
