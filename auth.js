@@ -43,6 +43,7 @@ function updateAccountUI() {
     signedOut.style.display = 'block';
     signedIn.style.display = 'none';
   }
+  refreshPresence();
 }
 
 function openAccountModal() { document.getElementById('accountModal').classList.add('show'); }
@@ -243,5 +244,56 @@ document.getElementById('friendSearchInput').oninput = debounce(async (e) => {
     console.warn('Search failed', e);
   }
 }, 300);
+
+// ---------- Live presence ("who's online") ----------
+const presenceChannel = sb.channel('boxlogic-online', {
+  config: { presence: { key: crypto.randomUUID() } }
+});
+let presenceReady = false;
+
+function myPresencePayload() {
+  return {
+    username: currentProfile ? currentProfile.username : 'Guest',
+    signedIn: !!currentProfile
+  };
+}
+
+function renderOnlineUI() {
+  const entries = Object.values(presenceChannel.presenceState()).map(arr => arr[0]);
+  const badge = document.getElementById('onlineBadge');
+  if (badge) badge.textContent = `🟢 ${entries.length} online`;
+
+  const listEl = document.getElementById('onlineList');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+  if (!entries.length) {
+    listEl.innerHTML = '<p class="hintText">No one else online right now.</p>';
+    return;
+  }
+  entries
+    .sort((a, b) => (b.signedIn ? 1 : 0) - (a.signedIn ? 1 : 0))
+    .forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'friendRow';
+      row.innerHTML = `<span>${p.signedIn ? '👤' : '👻'} ${p.username}</span>`;
+      listEl.appendChild(row);
+    });
+}
+
+function refreshPresence() {
+  if (presenceReady) presenceChannel.track(myPresencePayload());
+}
+
+presenceChannel
+  .on('presence', { event: 'sync' }, renderOnlineUI)
+  .subscribe(async (status) => {
+    if (status === 'SUBSCRIBED') {
+      presenceReady = true;
+      await presenceChannel.track(myPresencePayload());
+    }
+  });
+
+document.getElementById('onlineBadge').onclick = () => document.getElementById('onlineModal').classList.add('show');
+document.getElementById('closeOnline').onclick = () => document.getElementById('onlineModal').classList.remove('show');
 
 refreshSession();
