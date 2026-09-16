@@ -99,6 +99,8 @@
       border-radius: 14px;
       padding: 22px;
       width: min(340px, 88vw);
+      max-height: 85vh;
+      overflow-y: auto;
       box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     }
     .modalBox h2 { margin: 0 0 6px 0; color: #ffd166; }
@@ -115,6 +117,17 @@
     }
     #lbList li:first-child { color: #ffd166; font-weight: bold; }
     #lbStatus { font-size: 0.85em; color: #89a; text-align: center; padding: 10px 0; }
+    .tabRow { display: flex; gap: 6px; margin-bottom: 10px; }
+    .tab { flex: 1; padding: 8px 0; font-size: 0.85em; }
+    .tab.active { background: linear-gradient(180deg, #ffd166, #f4845f); color: #221; font-weight: bold; }
+    .friendRow {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 4px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.9em;
+    }
+    .friendRow button { padding: 4px 10px; font-size: 0.8em; }
+    .hintText { font-size: 0.85em; color: #678; margin: 4px 0; }
+    #authError { color: #f4845f; font-size: 0.85em; margin: -6px 0 10px 0; display: none; }
+    #accountModal h3 { margin: 18px 0 6px 0; color: #ffd166; font-size: 0.95em; }
   </style>
 </head>
 <body>
@@ -149,6 +162,7 @@
         <button id="rerollBtn">🔄 Reroll</button>
       </span>
       <button id="lbBtn">🏆 Leaderboard</button>
+      <button id="accountBtn">👤 Sign In</button>
       <button class="primary" id="nextBtn" style="display:none">Next Level →</button>
     </div>
     <div id="levelSelect"></div>
@@ -156,14 +170,13 @@
   </div>
 </div>
 
-<!-- Name entry modal -->
+<!-- Final score modal -->
 <div class="modalOverlay" id="nameModal">
   <div class="modalBox">
     <h2>You beat BoxLogic! 🏆</h2>
     <p id="finalScoreLine"></p>
-    <input id="nameInput" maxlength="16" placeholder="Enter your name">
     <div class="row">
-      <button id="skipSubmit">Skip</button>
+      <button id="skipSubmit">Close</button>
       <button class="primary" id="submitScore">Submit Score</button>
     </div>
   </div>
@@ -173,6 +186,10 @@
 <div class="modalOverlay" id="lbModal">
   <div class="modalBox">
     <h2>Leaderboard</h2>
+    <div class="tabRow">
+      <button id="lbGlobalTab" class="tab active">🌍 Global</button>
+      <button id="lbFriendsTab" class="tab">👥 Friends</button>
+    </div>
     <p>Lowest total moves to clear all levels</p>
     <div id="lbStatus">Loading…</div>
     <ol id="lbList"></ol>
@@ -182,9 +199,47 @@
   </div>
 </div>
 
+<!-- Account modal (sign in/up + friends) -->
+<div class="modalOverlay" id="accountModal">
+  <div class="modalBox">
+    <h2>Account</h2>
+
+    <div id="authSignedOut">
+      <p id="authError"></p>
+      <input id="authUsername" maxlength="20" placeholder="Username (for sign up)">
+      <input id="authEmail" type="email" placeholder="Email">
+      <input id="authPassword" type="password" placeholder="Password">
+      <div class="row">
+        <button id="authSignUpBtn">Sign Up</button>
+        <button class="primary" id="authSignInBtn">Sign In</button>
+      </div>
+    </div>
+
+    <div id="authSignedIn" style="display:none">
+      <p>Signed in as <strong id="authUsernameLabel"></strong></p>
+      <button id="authSignOutBtn">Sign Out</button>
+
+      <h3>Add a friend</h3>
+      <input id="friendSearchInput" placeholder="Search by username">
+      <div id="friendSearchResults"></div>
+
+      <h3>Requests</h3>
+      <div id="friendRequestsList"></div>
+
+      <h3>Your friends</h3>
+      <div id="friendsList"></div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <button id="closeAccount">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- External level data -->
 <script src="levels.js"></script>
 <script src="generator.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
   const TILE = 46;
@@ -355,30 +410,44 @@
 
   // ---------- Leaderboard ----------
   function showFinalScore(total) {
-    document.getElementById('finalScoreLine').textContent =
-      `All ${LEVELS.length} levels cleared in ${total} total moves. Submit your score?`;
+    const line = document.getElementById('finalScoreLine');
+    const submitBtn = document.getElementById('submitScore');
+    if (typeof currentProfile !== 'undefined' && currentProfile) {
+      line.textContent = `All ${LEVELS.length} levels cleared in ${total} total moves.`;
+      submitBtn.textContent = 'Submit Score';
+    } else {
+      line.textContent = `All ${LEVELS.length} levels cleared in ${total} total moves. Sign in to save it to the leaderboard.`;
+      submitBtn.textContent = 'Sign In';
+    }
     document.getElementById('nameModal').classList.add('show');
   }
   document.getElementById('skipSubmit').onclick = () => {
     document.getElementById('nameModal').classList.remove('show');
   };
   document.getElementById('submitScore').onclick = async () => {
-    const name = document.getElementById('nameInput').value.trim() || 'Anonymous';
     const total = LEVELS.reduce((sum, _, i) => sum + (bestByLevel[i] || 0), 0);
     document.getElementById('nameModal').classList.remove('show');
-    if (typeof window.submitScore === 'function') {
-      showToast('Submitting score…');
-      try {
-        await window.submitScore(name, total);
-        showToast('Score submitted! 🎉');
-      } catch (e) {
-        showToast('Could not submit — check Firebase setup.');
-      }
-    } else {
-      showToast('Leaderboard not configured.');
+    if (typeof currentProfile === 'undefined' || !currentProfile) {
+      openAccountModal();
+      return;
+    }
+    showToast('Submitting score…');
+    try {
+      await window.submitScore(null, total);
+      showToast('Score submitted! 🎉');
+    } catch (e) {
+      showToast('Could not submit score.');
     }
     openLeaderboard();
   };
+
+  let lbScope = 'global';
+  function setActiveTab() {
+    document.getElementById('lbGlobalTab').classList.toggle('active', lbScope === 'global');
+    document.getElementById('lbFriendsTab').classList.toggle('active', lbScope === 'friends');
+  }
+  document.getElementById('lbGlobalTab').onclick = () => { lbScope = 'global'; setActiveTab(); refreshLeaderboard(); };
+  document.getElementById('lbFriendsTab').onclick = () => { lbScope = 'friends'; setActiveTab(); refreshLeaderboard(); };
 
   function openLeaderboard() {
     document.getElementById('lbModal').classList.add('show');
@@ -392,9 +461,13 @@
       statusEl.textContent = 'Leaderboard not configured yet.';
       return;
     }
+    if (lbScope === 'friends' && (typeof currentProfile === 'undefined' || !currentProfile)) {
+      statusEl.textContent = 'Sign in to see your friends leaderboard.';
+      return;
+    }
     statusEl.textContent = 'Loading…';
     try {
-      const rows = await window.loadLeaderboard();
+      const rows = await window.loadLeaderboard(lbScope);
       if (!rows.length) { statusEl.textContent = 'No scores yet — be the first!'; return; }
       statusEl.textContent = '';
       rows.forEach((r, i) => {
@@ -403,7 +476,7 @@
         listEl.appendChild(li);
       });
     } catch (e) {
-      statusEl.textContent = 'Could not load leaderboard — check Firebase setup.';
+      statusEl.textContent = 'Could not load leaderboard.';
     }
   }
   document.getElementById('lbBtn').onclick = openLeaderboard;
@@ -585,50 +658,7 @@
   loadLevel(0);
 </script>
 
-<!-- Firebase leaderboard (optional) -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import {
-    getFirestore, collection, addDoc, serverTimestamp,
-    query, orderBy, limit, getDocs
-  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
-  // ---- REPLACE WITH YOUR FIREBASE CONFIG ----
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
-  // ------------------------------------------
-
-  let db = null;
-  try {
-    if (!firebaseConfig.apiKey.startsWith('YOUR_')) {
-      const app = initializeApp(firebaseConfig);
-      db = getFirestore(app);
-    }
-  } catch (e) {
-    console.warn('Firebase not configured yet:', e);
-  }
-
-  window.submitScore = async function(name, totalMoves) {
-    if (!db) throw new Error('Firebase not configured');
-    await addDoc(collection(db, 'scores'), {
-      name: String(name).slice(0, 16),
-      totalMoves: Math.round(totalMoves),
-      createdAt: serverTimestamp()
-    });
-  };
-
-  window.loadLeaderboard = async function() {
-    if (!db) throw new Error('Firebase not configured');
-    const q = query(collection(db, 'scores'), orderBy('totalMoves', 'asc'), limit(10));
-    const snap = await getDocs(q);
-    return snap.docs.map(d => d.data());
-  };
-</script>
+<!-- Accounts, scores & friends (Supabase) -->
+<script src="auth.js"></script>
 </body>
 </html>
