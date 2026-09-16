@@ -49,8 +49,9 @@ function openAccountModal() { document.getElementById('accountModal').classList.
 
 // ---------- Auth actions ----------
 async function signUp(email, password, username) {
-  const { error } = await sb.auth.signUp({ email, password, options: { data: { username } } });
+  const { data, error } = await sb.auth.signUp({ email, password, options: { data: { username } } });
   if (error) throw error;
+  return data.session; // set if email confirmation is off (signs the user in immediately); null otherwise
 }
 async function signIn(email, password) {
   const { error } = await sb.auth.signInWithPassword({ email, password });
@@ -180,8 +181,13 @@ document.getElementById('authSignUpBtn').onclick = async () => {
   errEl.style.display = 'none';
   if (!username) { errEl.textContent = 'Pick a username.'; errEl.style.display = 'block'; return; }
   try {
-    await signUp(email, password, username);
-    showToast('Check your email to confirm your account, then sign in.');
+    const session = await signUp(email, password, username);
+    if (session) {
+      document.getElementById('accountModal').classList.remove('show');
+      showToast('Account created! 🎉');
+    } else {
+      showToast('Check your email to confirm your account, then sign in.');
+    }
   } catch (e) {
     errEl.textContent = e.message || 'Sign up failed.';
     errEl.style.display = 'block';
