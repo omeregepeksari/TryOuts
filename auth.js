@@ -43,6 +43,7 @@ function updateAccountUI() {
     signedOut.style.display = 'block';
     signedIn.style.display = 'none';
   }
+  refreshPresence();
 }
 
 function openAccountModal() { document.getElementById('accountModal').classList.add('show'); }
@@ -243,5 +244,30 @@ document.getElementById('friendSearchInput').oninput = debounce(async (e) => {
     console.warn('Search failed', e);
   }
 }, 300);
+
+// ---------- Presence (no in-game UI — inspect this in the Supabase dashboard:
+// Project > Realtime > Inspector, channel "boxlogic-online", filter to Presence) ----------
+const presenceChannel = sb.channel('boxlogic-online', {
+  config: { presence: { key: crypto.randomUUID() } }
+});
+let presenceReady = false;
+
+function myPresencePayload() {
+  return {
+    username: currentProfile ? currentProfile.username : 'Guest',
+    signedIn: !!currentProfile
+  };
+}
+
+function refreshPresence() {
+  if (presenceReady) presenceChannel.track(myPresencePayload());
+}
+
+presenceChannel.subscribe(async (status) => {
+  if (status === 'SUBSCRIBED') {
+    presenceReady = true;
+    await presenceChannel.track(myPresencePayload());
+  }
+});
 
 refreshSession();
